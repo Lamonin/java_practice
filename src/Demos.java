@@ -1,5 +1,7 @@
 import DataBase.DataBaseController;
 import DataBase.TableController;
+import DataBase.TableField;
+import DataBase.TableTemplate;
 import FileIO.Employee;
 import FileIO.EmployeIO;
 import Flight.*;
@@ -135,8 +137,7 @@ class Demos {
         System.out.println(EmployeIO.Read("input_2.txt").getFullInfo());
     }
 
-    public static void PhilosophersDemo()
-    {
+    public static void PhilosophersDemo() {
         JFrame frame = new JFrame("Стол с философами");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -165,8 +166,18 @@ class Demos {
         var dbc = new DataBaseController();
         dbc.setUser("javapractice", "javapracticepassword")
            .connect("jdbc:postgresql://localhost/javapractice");
-        System.out.println(dbc.tableExist("users"));
 
-        var tc = new TableController(dbc, "users");
+        var tt = new TableTemplate();
+        tt.setPrimaryKey("Id").stringField("Name", 30).intField("Age");
+
+        var tc = new TableController(dbc, tt);
+        tc.setTableName("users")
+                .clearTable()
+                .addValue("Biba", "27")
+                .addValue("Boba", "30");
+
+        System.out.println(tc.setTableName("users").tableAsString());
+
+        // dbc.createTable("managers", tt).addValue("Bob", 100).addValue("Jon", 40);
     }
 }

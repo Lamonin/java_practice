@@ -9,21 +9,6 @@ public class DataBaseController {
 
     public DataBaseController() {
         connectionProperties = new Properties();
-
-/*        try {
-            Properties props = new Properties();
-            props.setProperty("user", "javapractice");
-            props.setProperty("password", "javapracticepassword");
-            var conn = DriverManager.getConnection("jdbc:postgresql://localhost/javapractice", props);
-            var st = conn.prepareStatement(conn.nativeSQL("DROP TABLE IF EXISTS users; CREATE TABLE users(Id SERIAL PRIMARY KEY, Name CHARACTER VARYING(30), Age INTEGER);"));
-            st.executeUpdate();
-
-            st = conn.prepareStatement(conn.nativeSQL("INSERT INTO users (Name, Age) VALUES ('Tom', 33), ('Ben', 32);"));
-            st.execute();
-            var rs = st.getResultSet();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }*/
     }
 
     public DataBaseController setUser(String user, String password)
@@ -40,6 +25,20 @@ public class DataBaseController {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public TableController createTable(String tableName, TableTemplate template)
+    {
+        var builder = new StringBuilder("CREATE TABLE ");
+        builder.append(tableName).append(template.getColumnsWithType()).append(";");
+
+        try {
+            connection.prepareStatement(builder.toString()).execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new TableController(this, template).setTableName(tableName);
     }
 
     public boolean tableExist(String tableName)
