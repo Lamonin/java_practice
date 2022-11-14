@@ -66,6 +66,8 @@ public class TableController {
         }
     }
 
+    public TableTemplate getTemplate() { return template; }
+
     public String tableAsString()
     {
         var out = new StringBuilder();
@@ -78,7 +80,6 @@ public class TableController {
                     out.append(rs.getString(i)).append(" ");
                 }
                 out.append("\n");
-                System.out.println();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -89,11 +90,11 @@ public class TableController {
     public TableController clearTable()
     {
         try {
-            dbc.getConnection().prepareStatement("DELETE FROM " + tableName + ";").execute();
+            dbc.getConnection().prepareStatement("DROP TABLE " + tableName + ";").execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return this;
+        return dbc.createTable(tableName, template);
     }
 }

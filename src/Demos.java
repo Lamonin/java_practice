@@ -13,6 +13,7 @@ import Other.FIOBirthDateAndPlace;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Scanner;
 
 class Demos {
     // Task 5 - 1
@@ -167,8 +168,7 @@ class Demos {
         dbc.setUser("javapractice", "javapracticepassword")
            .connect("jdbc:postgresql://localhost/javapractice");
 
-        var tt = new TableTemplate();
-        tt.setPrimaryKey("Id").stringField("Name", 30).intField("Age");
+        var tt = new TableTemplate().setPrimaryKey("Id").stringField("Name", 30).intField("Age");
 
         var tc = new TableController(dbc, tt);
         tc.setTableName("users")
@@ -176,8 +176,34 @@ class Demos {
                 .addValue("Biba", "27")
                 .addValue("Boba", "30");
 
-        System.out.println(tc.setTableName("users").tableAsString());
+        System.out.println(tc.tableAsString());
+        System.out.println("Available commands: [add], [remove], [display], [clear], [exit]");
 
-        // dbc.createTable("managers", tt).addValue("Bob", 100).addValue("Jon", 40);
+        Scanner scanner = null;
+
+        boolean isExit = false;
+        while (!isExit)
+        {
+            if (scanner == null) {
+                scanner = new Scanner(System.in);
+            }
+            else {
+                scanner.reset();
+            }
+
+            switch (scanner.next()) {
+                case "add" -> {
+                    var out = new Object[tc.getTemplate().getColumnsCount()];
+                    for (int i = 0; i < tc.getTemplate().getColumnsCount(); i++) {
+                        out[i] = scanner.next();
+                    }
+                    tc.addValue(out);
+                }
+                case "remove" -> tc.removeValue(scanner.nextInt());
+                case "display" -> System.out.println(tc.tableAsString());
+                case "clear" -> tc.clearTable();
+                case "exit" -> isExit = true;
+            }
+        }
     }
 }

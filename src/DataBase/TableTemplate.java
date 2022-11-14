@@ -41,6 +41,8 @@ public class TableTemplate {
 
     public TableField getKey() { return key; }
 
+    public int getColumnsCount() { return fields.size(); }
+
     public String getColumns()
     {
         var out = new StringBuilder();
